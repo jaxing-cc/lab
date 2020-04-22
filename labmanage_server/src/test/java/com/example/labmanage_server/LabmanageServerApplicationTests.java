@@ -61,7 +61,7 @@ DeclareMapper declareMapper;
 
     @Test
     public void testMain(){
-//        System.out.println( declareMapper.setDone(4,10,1,1));
+        System.out.println("你好");
     }
     @Test
     public void test2(){
