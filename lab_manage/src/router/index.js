@@ -12,9 +12,12 @@ import SetNotice from '../components/SetNotice.vue'//设置公告
 import EqpCrud from '../components/EqpCrud.vue'//设备修改
 import Userrank from '../components/Userrank.vue'//设备修改
 import Lab from '../components/Lab.vue'//设备修改
+import LabBlog from '../components/LabBlog.vue'//实验室交流
+import LabUsers from '../components/LabUsers.vue'//实验室人员管理
+import mavonEditor from 'mavon-editor';//安装markdown编辑器
+import 'mavon-editor/dist/css/index.css'
 
-
-
+Vue.use(mavonEditor)
 Vue.use(VueRouter)
 
 const routes = [
@@ -38,6 +41,8 @@ const routes = [
       {path:'/eqpcrud',component:EqpCrud},
       {path:'/userrank',component:Userrank},
       {path:'/lab',component:Lab},
+      {path:'/lab_blog',component:LabBlog},
+      {path:'/lab_users',component:LabUsers}
     ]
   }
 ]

@@ -6,7 +6,7 @@
       </el-breadcrumb>
       <el-card class="box-card">
         <el-row>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-alert
               title="系统会查询这个时间后的记录--->>>"
               type="info"

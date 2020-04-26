@@ -3,7 +3,6 @@ package com.example.labmanage_server.controller;
 
 import com.example.labmanage_server.domain.*;
 import com.example.labmanage_server.service.LabServer;
-import com.example.labmanage_server.utils.TokenUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,5 +105,96 @@ public class LabController {
             return Msg.fail();
         }
     }
+    /**
+     * 查询用户与实验室关系
+     */
+    @RequestMapping(value = "/getBlogs",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg getLabtoUser(@RequestBody QueryInfo queryInfo){
+        if(queryInfo.getUid()==null){
+            return Msg.fail("uid不存在");
+        }
+        List<Blog> blogs=null;
+        try {
+            blogs= server.getBlogs(queryInfo.getUid());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (blogs==null){//该用户未加入实验室
+            return Msg.fail();
+        }else{
+            return Msg.success();
+        }
+    }
 
+    /**
+     * 添加用户进实验室
+     * @param labtoUser
+     * @return
+     */
+    @RequestMapping(value = "/addUserToLab",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg getLabtoUser(@RequestBody LabtoUser labtoUser){
+      if (labtoUser.getClassName()==null||labtoUser.getLabid()==null||labtoUser.getStuNum()==null
+              ||labtoUser.getUserid()==null){
+          System.out.println(labtoUser);
+          return Msg.fail();
+      }
+      if (server.addUsertoLab(labtoUser)){
+          return Msg.success();
+      }else{
+          return Msg.fail();
+      }
+    }
+
+    /**
+     * 根据实验室查用户
+     * @param queryInfo
+     * @return
+     */
+    @RequestMapping(value = "/getUserByLabid",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg getUserByLab(@RequestBody QueryInfo queryInfo){
+        if (queryInfo.getPagenum()==null||queryInfo.getName()==null||
+                queryInfo.getQuery()==null||queryInfo.getLabid()==null||queryInfo.getPagesize()==null){
+            return Msg.fail();
+        }
+        PageHelper.startPage(queryInfo.getPagenum(),queryInfo.getPagesize());
+        LabtoUser lu=new LabtoUser();
+        lu.setClassName(queryInfo.getName());
+        lu.setStuNum(queryInfo.getQuery());
+        lu.setLabid(queryInfo.getLabid());
+        List<LabtoUser> users = server.getUserByLabid(lu);
+        if (users==null){
+            return Msg.success("暂无数据");
+        }
+        PageInfo<LabtoUser> pageInfo = new PageInfo<>(users);
+        return Msg.success()
+                .add("datas",pageInfo.getList())
+                .add("total",pageInfo.getTotal());
+    }
+    @RequestMapping(value = "/setTag",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg setTag(@RequestBody LabtoUser lu){
+        if (lu.getUserid()==null||lu.getLabid()==null){
+            return Msg.fail();
+        }
+        if (server.setTag(lu)){
+            return  Msg.success("设置成功");
+        }else{
+            return Msg.fail("设置失败");
+        }
+    }
+    @RequestMapping(value = "/deleteUser",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg deleteUser(@RequestBody LabtoUser lu){
+        if (lu.getUserid()==null||lu.getLabid()==null){
+            return Msg.fail();
+        }
+        if (server.deleteUser(lu)){
+            return  Msg.success("删除成功");
+        }else{
+            return Msg.fail("删除失败");
+        }
+    }
 }

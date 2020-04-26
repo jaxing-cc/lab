@@ -6,7 +6,7 @@
     </el-breadcrumb>
     <el-card>
       <el-row :gutter="20" style="margin-top: 15px">
-        <el-col :span="2" style="margin-top: 5px">
+        <el-col :span="3" style="margin-top: 5px">
           添加新公告:
         </el-col>
         <el-col :span="10">
@@ -43,7 +43,6 @@
                  size="mini"
                  type="danger"
                  @click="opwin(scope.row)">删除</el-button>
-
              </template>
            </el-table-column>
          </el-table>
@@ -147,6 +146,7 @@
         } else{
           this.$message.error("请求失败！")
         }
+        this.loadData();
       },
       //监听页码改变
       handleCurrent(newNum){

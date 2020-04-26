@@ -148,7 +148,7 @@
       async getEqp(){//获取设备
         const res = await this.$http.post('eqp/getEqpByLabid',this.queryInfo);
         if (!res.data.flag){
-          this.$message.error("请求失败！")
+          this.$message.error("请求失败！请检查是否输入了的参数!")
           return;
         }
         const list=res.data.extend.eqps;

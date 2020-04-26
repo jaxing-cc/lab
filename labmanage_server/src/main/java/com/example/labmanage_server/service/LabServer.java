@@ -1,13 +1,12 @@
 package com.example.labmanage_server.service;
 
-import com.example.labmanage_server.domain.Eqp;
-import com.example.labmanage_server.domain.Lab;
-import com.example.labmanage_server.domain.Msg;
+import com.example.labmanage_server.domain.*;
 import com.example.labmanage_server.mapper.EqpMapper;
 import com.example.labmanage_server.mapper.LabMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -89,5 +88,60 @@ public class LabServer {
         }
     }
 
-
+    /**
+     * 查询一个用有实验室是加入实验室
+     * @param id
+     * @return
+     */
+    public List<Blog> getBlogs(Integer id){
+        LabtoUser lu = labMapper.getLuByUserId(id);
+        if (lu==null){
+            return null;
+        }else{
+            //查询博客
+            ArrayList<Blog> list=new ArrayList<>();
+            list.add(new Blog());//查询操作
+            return list;
+        }
+    }
+    /**
+     * 让一个用户加入某实验室
+     */
+    public boolean addUsertoLab(LabtoUser lu){
+        LabtoUser lued = labMapper.getLuByUserId(lu.getUserid());
+        if (lued!=null){
+            return false;
+        }
+        if (labMapper.addUserToLab(lu)>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 查询实验室人员
+     */
+    public List<LabtoUser> getUserByLabid(LabtoUser labtoUser){
+        return labMapper.getUserBylabid(labtoUser);
+    }
+    /**
+     * 设置标签
+     */
+    public boolean setTag(LabtoUser labtoUser){
+        if (labMapper.setTag(labtoUser)>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 删除人员
+     */
+    public boolean deleteUser(LabtoUser labtoUser){
+        if (labMapper.deleteUser(labtoUser)>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
