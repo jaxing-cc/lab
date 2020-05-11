@@ -44,14 +44,14 @@
                   @click="openwin(scope.row)">点进查看申报进度</el-button>
               </template>
             </el-table-column>
-            <el-table-column  label="操作"   fixed="right">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
+            <!--<el-table-column  label="操作"   fixed="right">-->
+              <!--<template slot-scope="scope">-->
+                <!--<el-button-->
+                  <!--size="mini"-->
+                  <!--type="danger"-->
+                  <!--@click="handleDelete(scope.row)">删除</el-button>-->
+              <!--</template>-->
+            <!--</el-table-column>-->
           </el-table>
         </el-row>
         <el-row>
