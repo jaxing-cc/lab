@@ -6,7 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/global.css'
 import axios from 'axios'
 //配置axios
-axios.defaults.baseURL='http://localhost:8081/'//请求根路径
+axios.defaults.baseURL='http://localhost:8080/'//请求根路径
 
 //加上token请求头 预处理
 axios.interceptors.request.use(

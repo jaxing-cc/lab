@@ -16,7 +16,7 @@
           </el-col>
         </el-row>
         <!--table数据-->
-        <el-row class="declareTable">
+        <el-row class="declareTable" style="margin-top: 10px">
           <el-table :data="declareList" border style="width: 100%" stripe height="500">
             <el-table-column type="index">
             </el-table-column>
@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column prop="mast.name" label="实验室管理员" width="100">
             </el-table-column>
-            <el-table-column prop="mast.phone" label="实验室管理员电话" width="180">
+            <el-table-column prop="mast.phone" label="管理员电话" width="120">
             </el-table-column>
             <!--<el-table-column  label="申报进度" :formatter="doneFilter" width="180">-->
             <!--</el-table-column>-->
@@ -42,6 +42,22 @@
                   size="mini"
                   type="success"
                   @click="openwin(scope.row)">点进查看申报进度</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column  label="申报图片上传"  width="180">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="openUpload(scope.row)">上传设备图片</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column  label="图片管理"  width="120">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="openImages(scope.row)">管理</el-button>
               </template>
             </el-table-column>
             <!--<el-table-column  label="操作"   fixed="right">-->
@@ -94,6 +110,69 @@
           <el-button @click="dialogVisible = false">关 闭</el-button>
         </span>
       </el-dialog>
+<!--     上传图片对话框 -->
+      <el-dialog
+        title="设备损坏图片上传"
+        :visible.sync="uploadDialog"
+        width="20%">
+        <span>
+          <el-row>
+                <el-upload
+                  ref="imgUploadRef"
+                  class="upload-demo"
+                  :action="action+'img/upload'"
+                  :before-upload="beforeUpload"
+                  :before-remove="beforeRemove"
+                  :headers="importHeaders"
+                  multiple
+                  :limit="1"
+                  :on-exceed="handleExceed"
+                  :on-success="handleUploadSuccess"
+                  :on-error="handleUploadError"
+                  name="file"
+                  :auto-upload="false">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2M</div>
+                  </el-upload>
+          </el-row>
+        </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="uploadDialog = false">关 闭</el-button>
+          <el-button @click="saveImg">保 存</el-button>
+        </span>
+      </el-dialog>
+<!--      上传管理-->
+      <el-drawer
+        title="图片管理"
+        :visible.sync="imgDialog"
+        direction="rtl"
+        @close="url = '#'"
+        width="30%">
+      <span>
+        <div v-if="imgs.length !== 0">
+          <ul>
+            <li v-for="(item,index) in imgs" :key="item.id">
+             图片_{{index + 1 }} &nbsp;&nbsp;
+              <el-button icon="el-icon-delete" circle @click="remove(item)"></el-button>
+              <el-button icon="el-icon-search" circle @click="look(item.path)"></el-button>
+            </li>
+          </ul>
+          <hr>
+          <el-image
+            style="width: 300px; height: 300px; margin-left: 10px"
+            :src="url"
+            fit="contain">
+          </el-image>
+        </div>
+        <div v-if="imgs.length === 0">
+          <ul>
+            <li>
+              还没有上传图片
+            </li>
+          </ul>
+        </div>
+      </span>
+      </el-drawer>
     </div>
 </template>
 
@@ -102,19 +181,105 @@
     name: 'Declare',
     data () {
       return{
+        imgDialog:false,
+        uploadDialog:false,
         dialogVisible:false,
         active:0,
         state:"",
         declareList:[],
+        importHeaders: {
+          token:window.sessionStorage.getItem("token")
+        },
+        url:'#',
         total:0,
         queryInfo:{
           pagenum:1,//当前页数
           uid:'',
         },
-        pagesize:100
+        action:"http://localhost:8080/",
+        pagesize:100,
+        imgDeclare:{
+          did:0,
+          path:"",
+        },
+        imgs:[]
       }
     },
     methods:{
+      look(path){
+        this.$http.get('img/url?key='+path).then( res =>{
+          this.url = res.data.extend.img;
+        })
+      },
+      remove(item){
+          this.$http.delete('img/delete', {data:item}).then(res =>{
+            if (res.data.flag){
+              this.$message.success("删除成功")
+              this.imgDialog = false;
+            }else{
+              this.$message.error("删除失败")
+              this.imgDialog = false;
+
+            }
+          })
+      },
+      openImages(row){
+        this.loadImgs(row.id);
+        this.imgDialog = true;
+      },
+      async loadImgs(id) {
+        const res = await this.$http.get('img/getImg/'+id);
+        this.imgs = res.data.extend.imgs;
+      },
+      saveImg(){
+        if (this.imgs.length < 3){
+          this.$refs.imgUploadRef.submit();
+        }else{
+          this.$message.error("图片最多上传三张!");
+        }
+      },
+      handleUploadError(){
+        this.$message.error("服务器出现小问题...");
+      },
+      //上传成功
+      handleUploadSuccess(response){
+        if (response.flag){
+          this.imgDeclare.path = response.extend.path
+          this.$http.post("img/saveKey",this.imgDeclare).then(res =>{
+            if (res.data.flag){
+              this.$message.success("上传成功!");
+              this.uploadDialog = false;
+            }else{
+              this.$message.error("上传失败，请稍候再试!");
+            }
+          })
+        }else{
+          this.$message.error("上传失败，请稍候再试!");
+        }
+      },
+      //文件超出个数限制时的钩子
+      handleExceed(){
+        this.$message.error("每次只能上传一张图片，可上传三次");
+      },
+      beforeRemove(){
+        return true;
+      },
+      beforeUpload(file){
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size <= (1024 * 1024 * 2);
+        if (!isJPG) {
+          this.$message.error('上传商品图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传商品图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
+      },
+      openUpload(row){
+        this.loadImgs(row.id);
+        this.imgDeclare.did = row.id
+        this.uploadDialog = true;
+      },
       async loadAll () {
         let user = window.sessionStorage.getItem("user");
         let parse = JSON.parse(user);

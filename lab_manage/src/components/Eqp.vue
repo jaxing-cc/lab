@@ -79,15 +79,23 @@
         :visible.sync="dialogVisible"
         width="50%">
         <span>
-          申请人名称:
-          <el-input v-model="uname" placeholder="请输入内容" disabled></el-input><br>
-          请输入设备损坏的原因:
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入内容"
-            v-model="reason" >
-          </el-input>
+          <el-row>
+            申请人名称:
+          </el-row>
+          <el-row style="margin-top: 10px">
+            <el-input v-model="uname" placeholder="请输入内容" disabled></el-input><br><br>
+          </el-row>
+          <el-row>
+            请输入设备损坏的原因:
+          </el-row>
+          <el-row style="margin-top: 10px">
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="reason" >
+            </el-input>
+          </el-row>
         </span>
         <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -191,7 +199,7 @@
           if (flag) {
             this.$message({
               type: 'success',
-              message: '申报成功!'
+              message: '申报成功!请前往申报进度查询处上传图片!'
             });
           }
           this.dialogVisible=false;

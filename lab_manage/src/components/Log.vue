@@ -37,8 +37,9 @@
               <el-table-column label="日志内容">
                 <template slot-scope="scope">
                   <div v-if="scope.row.declare!=null">
-                    <el-tag type="success">由用户:</el-tag><el-link type="danger">{{scope.row.declare.user.name}}</el-link> <el-tag type="success">申报的,来自:  </el-tag><el-link type="danger">{{scope.row.declare.eqp.lab.name}}</el-link><el-tag type="success">的设备:</el-tag><el-link type="danger">{{scope.row.declare.eqp.name}}</el-link><el-tag type="success">的维修信息,</el-tag>
-                    <el-tag type="success"> 已经被管理员:</el-tag>  <el-link type="danger">{{scope.row.user.name}} </el-link><el-tag type="success">处理完成,</el-tag><el-tag type="success">设备已经恢复正常</el-tag>
+                    由用户:<el-link type="danger">{{scope.row.declare.user.name}}</el-link> 申报的故障的设备:  <el-link type="danger">{{scope.row.declare.eqp.lab.name}}</el-link> 的
+                    <el-link type="danger">{{scope.row.declare.eqp.name}}</el-link>
+                     已经被管理员: <el-link type="danger">{{scope.row.user.name}} </el-link>处理完成，设备已经恢复正常
                   </div>
                   <div v-if="scope.row.declare==null">
                     该申报表已经被删除

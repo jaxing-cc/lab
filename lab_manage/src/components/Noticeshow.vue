@@ -52,6 +52,9 @@
         </el-row>
       </div>
     </el-card>
+    <el-row id="icp">
+      <a href="https://beian.miit.gov.cn/">互联网ICP备案号:豫ICP备2020035023号-1 </a>
+    </el-row>
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
@@ -130,6 +133,10 @@
 </script>
 
 <style scoped>
+#icp{
+  margin-top: 30px;
+  margin-left: 40%;
+}
   .text {
     font-size: 15px;
   }

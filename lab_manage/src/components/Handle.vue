@@ -69,6 +69,12 @@
                   @click="handle(scope.row)"
                   v-if="queryInfo.done!=4"
                 >处理</el-button>
+                <el-button
+                  size="mini"
+                  @click="openImages(scope.row)"
+                  v-if="queryInfo.done!=4"
+                >设备图片查看
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -152,6 +158,37 @@
           <el-button type="primary" @click="openwin">保存该进度</el-button>
         </span>
       </el-dialog>
+<!--      图片查看-->
+      <el-drawer
+        title="图片管理"
+        :visible.sync="imgDialog"
+        direction="rtl"
+        @close="url = '#'"
+        width="30%">
+      <span>
+        <div v-if="imgs.length !== 0">
+          <ul>
+            <li v-for="(item,index) in imgs" :key="item.id">
+             图片_{{index + 1 }} &nbsp;&nbsp;
+              <el-button icon="el-icon-search" circle @click="look(item.path)"></el-button>
+            </li>
+          </ul>
+          <hr>
+          <el-image
+            style="width: 300px; height: 300px; margin-left: 10px"
+            :src="url"
+            fit="contain">
+          </el-image>
+        </div>
+        <div v-if="imgs.length === 0">
+          <ul>
+            <li>
+              还没有图片
+            </li>
+          </ul>
+        </div>
+      </span>
+      </el-drawer>
     </div>
 </template>
 
@@ -160,6 +197,7 @@
     name: 'Handle',
     data () {
       return {
+        imgDialog:false,
         eqpname:'',
         eqpmanager:'',
         eqpmanagerphone:'',
@@ -195,10 +233,25 @@
           eid:0,
         },
         pagesize:100,
-        total:0
+        total:0,
+        imgs:[],
+        url:'#'
       }
     },
     methods:{
+      look(path){
+        this.$http.get('img/url?key='+path).then( res =>{
+          this.url = res.data.extend.img;
+        })
+      },
+      openImages(row){
+        this.loadImgs(row.id);
+        this.imgDialog = true;
+      },
+      async loadImgs(id) {
+        const res = await this.$http.get('img/getImg/'+id);
+        this.imgs = res.data.extend.imgs;
+      },
       next() {
         this.active++;
         // this.done_=this.active-1;
